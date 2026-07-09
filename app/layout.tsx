@@ -9,8 +9,8 @@ const sourceSans3Heading = Source_Sans_3({subsets:['latin'],variable:'--font-hea
 const ibmPlexSans = IBM_Plex_Sans({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
-  title: "Kanban Todo",
-  description: "Kanban board application",
+  title: "논술 원서 지원 도구",
+  description: "서울 상위 15개 대학 논술 일정·수능최저·반영비율 조회",
 };
 
 export default function RootLayout({
