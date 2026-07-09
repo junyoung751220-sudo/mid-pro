@@ -34,8 +34,10 @@ export function SearchView({ dataset = NONSUL_DATASET }: SearchViewProps) {
     (department) => department.universityId === universityId
   );
 
+  const isAtMaxEntries = entries.length >= MAX_SEARCH_ENTRIES;
+
   function handleAdd() {
-    if (!universityId || !departmentId) return;
+    if (!universityId || !departmentId || isAtMaxEntries) return;
     setEntries((prev) => [
       ...prev,
       { id: `${Date.now()}-${prev.length}`, universityId, departmentId },
@@ -67,6 +69,7 @@ export function SearchView({ dataset = NONSUL_DATASET }: SearchViewProps) {
           <NativeSelect
             id="nonsul-university"
             value={universityId}
+            disabled={isAtMaxEntries}
             onChange={(event) => {
               setUniversityId(event.target.value);
               setDepartmentId("");
@@ -85,7 +88,7 @@ export function SearchView({ dataset = NONSUL_DATASET }: SearchViewProps) {
           <NativeSelect
             id="nonsul-department"
             value={departmentId}
-            disabled={!universityId}
+            disabled={!universityId || isAtMaxEntries}
             onChange={(event) => setDepartmentId(event.target.value)}
           >
             <NativeSelectOption value="">학과 선택...</NativeSelectOption>
@@ -99,12 +102,18 @@ export function SearchView({ dataset = NONSUL_DATASET }: SearchViewProps) {
         <Button
           type="button"
           onClick={handleAdd}
-          disabled={!universityId || !departmentId}
+          disabled={!universityId || !departmentId || isAtMaxEntries}
         >
           <PlusIcon data-icon="inline-start" />
           추가
         </Button>
       </FieldGroup>
+
+      {isAtMaxEntries && (
+        <p className="text-sm text-destructive">
+          최대 10개까지 담을 수 있습니다. 항목을 제거한 뒤 다시 추가해주세요.
+        </p>
+      )}
 
       <Badge variant="secondary">
         담긴 항목 {entries.length} / {MAX_SEARCH_ENTRIES}

@@ -111,4 +111,31 @@ describe("SearchView", () => {
     await addEntry(user, "A대학교", "경영학과");
     expect(screen.getByText("담긴 항목 1 / 10")).toBeInTheDocument();
   });
+
+  it(
+    "blocks adding an 11th entry once 10 are already added, then re-allows after removing one",
+    async () => {
+    const user = userEvent.setup();
+    render(<SearchView dataset={dataset} />);
+
+    for (let i = 0; i < 10; i++) {
+      await addEntry(user, "A대학교", "경영학과");
+    }
+    expect(screen.getByText("담긴 항목 10 / 10")).toBeInTheDocument();
+    expect(screen.getAllByText("A대학교 / 경영학과")).toHaveLength(10);
+    expect(screen.getByLabelText("학교")).toBeDisabled();
+    expect(screen.getByRole("button", { name: "추가" })).toBeDisabled();
+    expect(
+      screen.getByText("최대 10개까지 담을 수 있습니다. 항목을 제거한 뒤 다시 추가해주세요.")
+    ).toBeInTheDocument();
+
+    await user.click(screen.getAllByRole("button", { name: "제거" })[0]);
+    expect(screen.getByText("담긴 항목 9 / 10")).toBeInTheDocument();
+    expect(screen.getByLabelText("학교")).not.toBeDisabled();
+
+    await addEntry(user, "A대학교", "경영학과");
+    expect(screen.getByText("담긴 항목 10 / 10")).toBeInTheDocument();
+    },
+    15000
+  );
 });
