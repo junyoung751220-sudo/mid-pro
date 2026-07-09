@@ -34,8 +34,8 @@ Use `Field orientation="horizontal"` for settings pages. Use `FieldLabel classNa
 
 - Simple text input → `Input`
 - Dropdown with predefined options → `Select`
-- Searchable dropdown → `Combobox`
-- Native HTML select (no JS) → `native-select`
+- Searchable dropdown → `Combobox` — but if this dropdown needs RTL/jsdom test coverage, prefer `native-select` instead: this project's `Combobox`/`Select` are portal-based (`@base-ui/react` / `radix-ui`) and their pointer-capture/positioning behavior is flaky under jsdom, while a real `<select>` works with `userEvent.selectOptions` with no polyfills
+- Native HTML select (no JS), or any dropdown that must be reliably testable in jsdom → `native-select`
 - Boolean toggle → `Switch` (for settings) or `Checkbox` (for forms)
 - Single choice from few options → `RadioGroup`
 - Toggle between 2–5 options → `ToggleGroup` + `ToggleGroupItem`
