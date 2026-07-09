@@ -56,6 +56,8 @@ export const MINIMUM_REQUIREMENTS: NonsulDataset["minimumRequirements"] = [];
 
 export const REFLECTION_RATIOS: NonsulDataset["reflectionRatios"] = [];
 
+export const MAX_SEARCH_ENTRIES = 10;
+
 export const NONSUL_DATASET: NonsulDataset = {
   universities: UNIVERSITIES,
   departments: DEPARTMENTS,
