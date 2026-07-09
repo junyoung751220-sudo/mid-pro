@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { MAX_SEARCH_ENTRIES, NONSUL_DATASET } from "@/config/nonsulData";
-import { formatExamDateTime } from "@/lib/nonsulFormat";
+import { findOverlappingEntryIds } from "@/services/nonsulOverlap";
 import { resolveDepartmentDisplay } from "@/services/nonsulResolve";
 import type { NonsulDataset } from "@/types/nonsul";
 import { Badge } from "@/components/ui/badge";
@@ -12,7 +12,8 @@ import {
   NativeSelect,
   NativeSelectOption,
 } from "@/components/ui/native-select";
-import { PlusIcon, XIcon } from "@phosphor-icons/react";
+import { PlusIcon } from "@phosphor-icons/react";
+import { SearchResultRow } from "@/components/nonsul/search-result-row";
 
 interface SearchEntry {
   id: string;
@@ -45,6 +46,18 @@ export function SearchView({ dataset = NONSUL_DATASET }: SearchViewProps) {
   function handleRemove(id: string) {
     setEntries((prev) => prev.filter((entry) => entry.id !== id));
   }
+
+  const resolvedEntries = entries.map((entry) => ({
+    id: entry.id,
+    resolved: resolveDepartmentDisplay(dataset, entry.universityId, entry.departmentId),
+  }));
+
+  const overlappingIds = findOverlappingEntryIds(
+    resolvedEntries.map(({ id, resolved }) => ({
+      id,
+      date: resolved.schedule?.date ?? null,
+    }))
+  );
 
   return (
     <div className="flex flex-col gap-4">
@@ -98,56 +111,14 @@ export function SearchView({ dataset = NONSUL_DATASET }: SearchViewProps) {
       </Badge>
 
       <div className="flex flex-col gap-2">
-        {entries.map((entry) => {
-          const resolved = resolveDepartmentDisplay(
-            dataset,
-            entry.universityId,
-            entry.departmentId
-          );
-
-          return (
-            <div
-              key={entry.id}
-              className="rounded-md border border-border bg-card p-3"
-            >
-              <div className="flex items-center justify-between gap-2">
-                <div>
-                  <div className="font-medium">
-                    {resolved.universityName} / {resolved.requestedDepartmentName}
-                  </div>
-                  {resolved.isSubstituted && (
-                    <div className="text-xs text-muted-foreground">
-                      ※ 정확한 학과 데이터 없음 → 같은 계열 대표 데이터(
-                      {resolved.displayDepartmentName}) 표시 중
-                    </div>
-                  )}
-                </div>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon-sm"
-                  aria-label="제거"
-                  onClick={() => handleRemove(entry.id)}
-                >
-                  <XIcon />
-                </Button>
-              </div>
-              <div className="mt-2 grid grid-cols-3 gap-2 text-sm text-muted-foreground">
-                <span>
-                  {resolved.schedule
-                    ? formatExamDateTime(resolved.schedule)
-                    : "데이터 없음"}
-                </span>
-                <span>{resolved.minimumRequirement?.rawText ?? "데이터 없음"}</span>
-                <span>
-                  {resolved.reflectionRatio
-                    ? `논술 ${resolved.reflectionRatio.essayPercent}% + 학생부 ${resolved.reflectionRatio.recordPercent}%`
-                    : "데이터 없음"}
-                </span>
-              </div>
-            </div>
-          );
-        })}
+        {resolvedEntries.map(({ id, resolved }) => (
+          <SearchResultRow
+            key={id}
+            resolved={resolved}
+            isOverlapping={overlappingIds.has(id)}
+            onRemove={() => handleRemove(id)}
+          />
+        ))}
       </div>
     </div>
   );

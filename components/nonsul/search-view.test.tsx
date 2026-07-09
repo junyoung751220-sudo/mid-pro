@@ -12,12 +12,14 @@ const dataset: NonsulDataset = {
   ],
   departments: [
     { id: "a-경영학과", universityId: "a", name: "경영학과", track: "상경" },
+    { id: "a-경제학과", universityId: "a", name: "경제학과", track: "상경" },
     { id: "d-소프트웨어학과", universityId: "d", name: "소프트웨어학과", track: "공학" },
     { id: "d-컴퓨터공학과", universityId: "d", name: "컴퓨터공학과", track: "공학" },
     { id: "e-철학과", universityId: "e", name: "철학과", track: "인문" },
   ],
   schedules: [
     { departmentId: "a-경영학과", date: "2026-09-20", period: "오전", time: "09:00" },
+    { departmentId: "a-경제학과", date: "2026-09-20", period: "오후", time: "14:00" },
     { departmentId: "d-컴퓨터공학과", date: "2026-10-03", period: "오후", time: "13:30" },
   ],
   minimumRequirements: [
@@ -81,6 +83,23 @@ describe("SearchView", () => {
 
     await user.click(screen.getByRole("button", { name: "제거" }));
     expect(screen.queryByText("A대학교 / 경영학과")).not.toBeInTheDocument();
+  });
+
+  it("highlights entries whose exam dates collide (same date, different period) and clears it once resolved", async () => {
+    const user = userEvent.setup();
+    render(<SearchView dataset={dataset} />);
+
+    await addEntry(user, "D대학교", "소프트웨어학과");
+    expect(screen.queryByText("겹침")).not.toBeInTheDocument();
+
+    await addEntry(user, "A대학교", "경영학과");
+    expect(screen.queryByText("겹침")).not.toBeInTheDocument();
+
+    await addEntry(user, "A대학교", "경제학과");
+    expect(screen.getAllByText("겹침")).toHaveLength(2);
+
+    await user.click(screen.getAllByRole("button", { name: "제거" })[1]);
+    expect(screen.queryByText("겹침")).not.toBeInTheDocument();
   });
 
   it("shows the current entry count", async () => {
