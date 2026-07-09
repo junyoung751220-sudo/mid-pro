@@ -63,7 +63,7 @@ export function SearchView({ dataset = NONSUL_DATASET }: SearchViewProps) {
 
   return (
     <div className="flex flex-col gap-4">
-      <FieldGroup className="flex-row items-end gap-2">
+      <FieldGroup className="flex-row items-end gap-2 print:hidden">
         <Field>
           <FieldLabel htmlFor="nonsul-university">학교</FieldLabel>
           <NativeSelect
@@ -110,12 +110,12 @@ export function SearchView({ dataset = NONSUL_DATASET }: SearchViewProps) {
       </FieldGroup>
 
       {isAtMaxEntries && (
-        <p className="text-sm text-destructive">
+        <p className="text-sm text-destructive print:hidden">
           최대 10개까지 담을 수 있습니다. 항목을 제거한 뒤 다시 추가해주세요.
         </p>
       )}
 
-      <Badge variant="secondary">
+      <Badge variant="secondary" className="print:hidden">
         담긴 항목 {entries.length} / {MAX_SEARCH_ENTRIES}
       </Badge>
 

@@ -43,6 +43,7 @@ export function SearchResultRow({
           variant="ghost"
           size="icon-sm"
           aria-label="제거"
+          className="print:hidden"
           onClick={onRemove}
         >
           <XIcon />
