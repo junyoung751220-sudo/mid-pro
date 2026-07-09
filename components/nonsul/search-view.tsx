@@ -40,7 +40,7 @@ export function SearchView({ dataset = NONSUL_DATASET }: SearchViewProps) {
     if (!universityId || !departmentId || isAtMaxEntries) return;
     setEntries((prev) => [
       ...prev,
-      { id: `${Date.now()}-${prev.length}`, universityId, departmentId },
+      { id: crypto.randomUUID(), universityId, departmentId },
     ]);
     setDepartmentId("");
   }
