@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe: nonsul-tracker</title>
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  :root {
+    --w-bg: #f5f5f5;
+    --w-border: #ccc;
+    --w-text: #555;
+    --w-muted: #aaa;
+    --w-fill: #eee;
+  }
+
+  * {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    color: var(--w-text);
+  }
+
+  body { background: var(--w-bg); }
+
+  /* Screen nav */
+  nav { position: sticky; top: 0; z-index: 40; background: var(--w-bg); border-bottom: 1px solid var(--w-border); }
+  nav button { cursor: pointer; font-size: 13px; }
+  nav button:hover { background: var(--w-fill); border-radius: 4px; }
+  nav button.active { font-weight: bold; border-bottom: 2px solid var(--w-text); }
+
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* Viewport toggle */
+  .vp-toggle button {
+    font-size: 12px; padding: 2px 8px;
+    border: 1px solid var(--w-border); cursor: pointer; background: white;
+  }
+  .vp-toggle button:first-child { border-radius: 4px 0 0 4px; }
+  .vp-toggle button:last-child { border-radius: 0 4px 4px 0; border-left: none; }
+  .vp-toggle button.active { background: var(--w-text); color: white; }
+
+  /* Mobile viewport frame */
+  body.viewport-mobile .screen-content {
+    max-width: 375px !important;
+    margin: 24px auto !important;
+    border: 2px solid var(--w-border);
+    border-radius: 24px;
+    min-height: 667px;
+    background: white;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    padding: 32px 16px !important;
+  }
+
+  /* Screen Notes */
+  .screen-notes {
+    background: #fffde7;
+    border-left: 3px solid #ffd54f;
+    padding: 12px 16px;
+    margin-top: 24px;
+    font-size: 13px;
+    border-radius: 0 4px 4px 0;
+  }
+  .screen-notes summary {
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 12px;
+    color: #b0a050;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .screen-notes p { margin: 6px 0 2px; color: #777; }
+  .screen-notes ul { margin: 4px 0 0 16px; padding: 0; color: #777; }
+  .screen-notes li { margin: 2px 0; }
+
+  /* Custom wireframe helpers */
+  .w-card { border: 1px solid var(--w-border); border-radius: 8px; background: white; }
+  .w-row { border: 1px solid var(--w-border); border-radius: 6px; background: white; }
+  .w-row-overlap { border: 2px solid #d33; background: #fdecec; }
+  .w-row-overlap * { color: #b00; }
+  .w-btn { border: 1px solid var(--w-text); border-radius: 6px; padding: 6px 12px; background: white; font-size: 13px; }
+  .w-btn-primary { background: var(--w-text); color: white; }
+  .w-btn-disabled { border: 1px solid var(--w-muted); color: var(--w-muted); background: var(--w-fill); cursor: not-allowed; }
+  .w-input { border: 1px solid var(--w-border); border-radius: 6px; padding: 6px 10px; background: white; font-size: 13px; }
+  .w-pill { border: 1px solid var(--w-border); border-radius: 999px; padding: 2px 10px; font-size: 12px; background: var(--w-fill); }
+  .w-th { font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--w-muted); }
+  .w-td { font-size: 13px; }
+  .w-print-frame { border: 2px dashed var(--w-muted); background: white; }
+</style>
+</head>
+<body class="p-0 m-0 viewport-mobile">
+
+<nav class="flex items-center gap-4 px-6 py-2 flex-wrap">
+  <span class="text-xs" style="color:var(--w-muted)">wireframe: nonsul-tracker</span>
+  <button id="nav-0" onclick="show(0)" class="px-2 py-1">날짜순 보기</button>
+  <button id="nav-1" onclick="show(1)" class="px-2 py-1">검색 보기</button>
+  <button id="nav-2" onclick="show(2)" class="px-2 py-1">검색 보기 · 겹침</button>
+  <button id="nav-3" onclick="show(3)" class="px-2 py-1">검색 보기 · 개수제한</button>
+  <button id="nav-4" onclick="show(4)" class="px-2 py-1">인쇄 미리보기 · 검색</button>
+  <button id="nav-5" onclick="show(5)" class="px-2 py-1">인쇄 미리보기 · 날짜순</button>
+  <div class="vp-toggle flex ml-auto">
+    <button id="vp-desktop" onclick="setViewport('desktop')">Desktop</button>
+    <button id="vp-mobile" onclick="setViewport('mobile')" class="active">Mobile</button>
+  </div>
+</nav>
+
+<!-- Screen 0: 날짜순 보기 -->
+<div id="screen-0" class="screen" data-scenario="scenario-1">
+  <div class="screen-content @container max-w-6xl mx-auto p-6">
+
+    <h2 class="text-lg font-bold mb-5" style="color:var(--w-muted); border-bottom:1px solid var(--w-border); padding-bottom:8px;">
+      날짜순 보기
+    </h2>
+
+    <div class="flex items-center justify-between gap-2 mb-4">
+      <div class="flex gap-1">
+        <span class="w-pill font-bold" style="background:var(--w-text); color:white;">날짜순</span>
+        <span class="w-pill">검색</span>
+      </div>
+      <button class="w-btn flex items-center gap-1"><i data-lucide="printer" class="w-3 h-3"></i>인쇄</button>
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <!-- 데이터 있는 행 -->
+      <div class="w-row p-3 flex items-center justify-between @md:px-4">
+        <div class="flex flex-col">
+          <span class="w-td font-bold">서강대학교</span>
+          <span class="w-th">인문계열 · 논술고사</span>
+        </div>
+        <div class="text-right">
+          <div class="w-td">2026-09-20</div>
+          <div class="w-th">오전 · 09:00</div>
+        </div>
+      </div>
+      <div class="w-row p-3 flex items-center justify-between @md:px-4">
+        <div class="flex flex-col">
+          <span class="w-td font-bold">성균관대학교</span>
+          <span class="w-th">자연계열 · 논술고사</span>
+        </div>
+        <div class="text-right">
+          <div class="w-td">2026-09-20</div>
+          <div class="w-th">오후 · 14:00</div>
+        </div>
+      </div>
+      <div class="w-row p-3 flex items-center justify-between @md:px-4">
+        <div class="flex flex-col">
+          <span class="w-td font-bold">중앙대학교</span>
+          <span class="w-th">경영계열 · 논술고사</span>
+        </div>
+        <div class="text-right">
+          <div class="w-td">2026-09-26</div>
+          <div class="w-th">오전 · 10:00</div>
+        </div>
+      </div>
+      <div class="w-row p-3 flex items-center justify-between @md:px-4">
+        <div class="flex flex-col">
+          <span class="w-td font-bold">한양대학교</span>
+          <span class="w-th">공학계열 · 논술고사</span>
+        </div>
+        <div class="text-right">
+          <div class="w-td">2026-10-03</div>
+          <div class="w-th">오후 · 13:30</div>
+        </div>
+      </div>
+
+      <!-- 데이터 없는 대학 구획 -->
+      <div class="mt-4 mb-1 w-th">데이터 없음</div>
+      <div class="w-row p-3 flex items-center justify-between @md:px-4" style="opacity:0.6">
+        <span class="w-td font-bold">서울대학교</span>
+        <span class="w-th">데이터 없음</span>
+      </div>
+      <div class="w-row p-3 flex items-center justify-between @md:px-4" style="opacity:0.6">
+        <span class="w-td font-bold">연세대학교</span>
+        <span class="w-th">데이터 없음</span>
+      </div>
+      <div class="w-row p-3 flex items-center justify-between @md:px-4" style="opacity:0.6">
+        <span class="w-td font-bold">고려대학교</span>
+        <span class="w-th">데이터 없음</span>
+      </div>
+      <div class="w-th text-center py-1">... 나머지 8개 대학</div>
+    </div>
+
+    <div class="screen-notes">
+      <details open>
+        <summary>Notes</summary>
+        <p>화면 목적: 15개 대학 전체 논술 일정을 날짜 순서로 한 눈에 훑어보기</p>
+        <ul>
+          <li>트리거: 도구 진입 시 기본 화면 (또는 상단 "날짜순" 탭 클릭)</li>
+          <li>인터랙션: 상단 탭으로 "검색" 화면 전환 / "인쇄" 버튼 클릭 시 인쇄 미리보기로 전환</li>
+          <li>전환: 데이터 없는 대학은 목록 하단 별도 구획에 흐리게 표시</li>
+        </ul>
+      </details>
+    </div>
+
+  </div>
+</div>
+
+<!-- Screen 1: 검색 보기 (기본/상세확인 + 계열 대체 + 데이터없음 예시) -->
+<div id="screen-1" class="screen" data-scenario="scenario-2">
+  <div class="screen-content @container max-w-6xl mx-auto p-6">
+
+    <h2 class="text-lg font-bold mb-5" style="color:var(--w-muted); border-bottom:1px solid var(--w-border); padding-bottom:8px;">
+      검색 보기
+    </h2>
+
+    <div class="flex items-center justify-between gap-2 mb-4">
+      <div class="flex gap-1">
+        <span class="w-pill">날짜순</span>
+        <span class="w-pill font-bold" style="background:var(--w-text); color:white;">검색</span>
+      </div>
+      <button class="w-btn flex items-center gap-1"><i data-lucide="printer" class="w-3 h-3"></i>인쇄</button>
+    </div>
+
+    <!-- 입력 폼 -->
+    <div class="w-card p-3 mb-4 flex flex-col @md:flex-row gap-2 @md:items-end">
+      <div class="flex flex-col gap-1 flex-1">
+        <label class="w-th">학교</label>
+        <select class="w-input"><option>A대학교 선택...</option></select>
+      </div>
+      <div class="flex flex-col gap-1 flex-1">
+        <label class="w-th">학과</label>
+        <select class="w-input"><option>경영학과</option></select>
+      </div>
+      <button class="w-btn w-btn-primary flex items-center gap-1 justify-center"><i data-lucide="plus" class="w-3 h-3"></i>추가</button>
+    </div>
+    <div class="w-th mb-3">담긴 항목 3 / 10</div>
+
+    <!-- 결과 리스트 -->
+    <div class="flex flex-col gap-2">
+
+      <div class="w-row p-3 @md:grid @md:grid-cols-5 @md:items-center gap-2">
+        <div class="flex items-center justify-between @md:block">
+          <span class="w-td font-bold">A대학교 / 경영학과</span>
+          <button class="@md:hidden"><i data-lucide="x" class="w-3 h-3"></i></button>
+        </div>
+        <div class="w-td">2026-09-20<br><span class="w-th">오전 · 09:00</span></div>
+        <div class="w-td">국,수,영,탐(1) 중 3개 등급합 6 이내</div>
+        <div class="w-td">논술 70% + 학생부 30%</div>
+        <button class="w-btn hidden @md:flex items-center gap-1 justify-center"><i data-lucide="x" class="w-3 h-3"></i>제거</button>
+      </div>
+
+      <div class="w-row p-3 @md:grid @md:grid-cols-5 @md:items-center gap-2">
+        <div class="flex items-center justify-between @md:block">
+          <div class="flex flex-col">
+            <span class="w-td font-bold">D대학교 / 소프트웨어학과</span>
+            <span class="w-th">※ 정확한 학과 데이터 없음 → 공학계열 대표 데이터(컴퓨터공학과) 표시 중</span>
+          </div>
+          <button class="@md:hidden"><i data-lucide="x" class="w-3 h-3"></i></button>
+        </div>
+        <div class="w-td">2026-10-03<br><span class="w-th">오후 · 13:30</span></div>
+        <div class="w-td">수,과탐(1) 등급합 5 이내</div>
+        <div class="w-td">논술 60% + 학생부 40%</div>
+        <button class="w-btn hidden @md:flex items-center gap-1 justify-center"><i data-lucide="x" class="w-3 h-3"></i>제거</button>
+      </div>
+
+      <div class="w-row p-3 @md:grid @md:grid-cols-5 @md:items-center gap-2" style="opacity:0.6">
+        <div class="flex items-center justify-between @md:block">
+          <span class="w-td font-bold">E대학교 / 철학과</span>
+          <button class="@md:hidden"><i data-lucide="x" class="w-3 h-3"></i></button>
+        </div>
+        <div class="w-td">데이터 없음</div>
+        <div class="w-td">데이터 없음</div>
+        <div class="w-td">데이터 없음</div>
+        <button class="w-btn hidden @md:flex items-center gap-1 justify-center"><i data-lucide="x" class="w-3 h-3"></i>제거</button>
+      </div>
+
+      <div class="w-th grid grid-cols-5 gap-2 px-3 @md:flex hidden">
+        <span>학교 / 학과</span><span>논술일</span><span>수능최저</span><span>반영비율</span><span></span>
+      </div>
+    </div>
+
+    <div class="screen-notes">
+      <details open>
+        <summary>Notes</summary>
+        <p>화면 목적: 관심 학교·학과를 여러 개 담아 논술일·수능최저·반영비율을 비교</p>
+        <ul>
+          <li>트리거: 상단 "검색" 탭 클릭</li>
+          <li>인터랙션: 학교 선택 → 학과 드롭다운이 해당 학교 학과 목록으로 갱신 → "추가" 클릭 시 결과 리스트에 행 추가 / 각 행 "제거" 버튼으로 삭제</li>
+          <li>전환: 계열 대체 데이터가 표시될 때는 행 안에 대체 안내 문구가 함께 나타남 / 데이터가 전혀 없을 때는 모든 값 칸이 "데이터 없음"</li>
+        </ul>
+      </details>
+    </div>
+
+  </div>
+</div>
+
+<!-- Screen 2: 검색 보기 - 겹침 강조 -->
+<div id="screen-2" class="screen" data-scenario="scenario-3">
+  <div class="screen-content @container max-w-6xl mx-auto p-6">
+
+    <h2 class="text-lg font-bold mb-5" style="color:var(--w-muted); border-bottom:1px solid var(--w-border); padding-bottom:8px;">
+      검색 보기 · 논술일 겹침
+    </h2>
+
+    <div class="flex items-center justify-between gap-2 mb-4">
+      <div class="flex gap-1">
+        <span class="w-pill">날짜순</span>
+        <span class="w-pill font-bold" style="background:var(--w-text); color:white;">검색</span>
+      </div>
+      <button class="w-btn flex items-center gap-1"><i data-lucide="printer" class="w-3 h-3"></i>인쇄</button>
+    </div>
+
+    <div class="w-th mb-3">담긴 항목 2 / 10</div>
+
+    <div class="flex flex-col gap-2">
+
+      <div class="w-row-overlap p-3 @md:grid @md:grid-cols-5 @md:items-center gap-2">
+        <div class="flex items-center justify-between @md:block">
+          <span class="w-td font-bold flex items-center gap-1"><i data-lucide="alert-triangle" class="w-3 h-3"></i>B대학교 / 국어국문학과</span>
+          <button class="@md:hidden"><i data-lucide="x" class="w-3 h-3"></i></button>
+        </div>
+        <div class="w-td">2026-09-20<br><span class="w-th">오전 · 09:00</span></div>
+        <div class="w-td">국,수,영 중 2개 등급합 4 이내</div>
+        <div class="w-td">논술 60% + 학생부 40%</div>
+        <button class="w-btn hidden @md:flex items-center gap-1 justify-center"><i data-lucide="x" class="w-3 h-3"></i>제거</button>
+      </div>
+
+      <div class="w-row-overlap p-3 @md:grid @md:grid-cols-5 @md:items-center gap-2">
+        <div class="flex items-center justify-between @md:block">
+          <span class="w-td font-bold flex items-center gap-1"><i data-lucide="alert-triangle" class="w-3 h-3"></i>C대학교 / 사학과</span>
+          <button class="@md:hidden"><i data-lucide="x" class="w-3 h-3"></i></button>
+        </div>
+        <div class="w-td">2026-09-20<br><span class="w-th">오후 · 14:00</span></div>
+        <div class="w-td">국,수,영,탐(1) 중 3개 등급합 7 이내</div>
+        <div class="w-td">논술 65% + 학생부 35%</div>
+        <button class="w-btn hidden @md:flex items-center gap-1 justify-center"><i data-lucide="x" class="w-3 h-3"></i>제거</button>
+      </div>
+
+    </div>
+
+    <div class="w-card p-3 mt-4 flex items-center gap-2" style="border-color:#d33;">
+      <i data-lucide="alert-triangle" class="w-3 h-3" style="color:#b00;"></i>
+      <span class="w-td" style="color:#b00;">같은 날(2026-09-20) 논술이 겹칩니다 — 시간대와 관계없이 하루에 한 곳만 응시할 수 있습니다.</span>
+    </div>
+
+    <div class="screen-notes">
+      <details open>
+        <summary>Notes</summary>
+        <p>화면 목적: 여러 지원 학교의 논술일이 겹치는지 즉시 인지</p>
+        <ul>
+          <li>트리거: 검색 보기에서 담긴 항목 중 두 개 이상의 날짜(시간대 무관)가 같아짐</li>
+          <li>인터랙션: 겹치는 행에 경고 아이콘 + 빨간 테두리/배경 적용, 하단에 요약 경고 배지 노출</li>
+          <li>전환: 겹치는 항목 중 하나를 "제거"하면 남은 행의 강조가 사라짐</li>
+        </ul>
+      </details>
+    </div>
+
+  </div>
+</div>
+
+<!-- Screen 3: 검색 보기 - 개수 제한 도달 -->
+<div id="screen-3" class="screen" data-scenario="scenario-4">
+  <div class="screen-content @container max-w-6xl mx-auto p-6">
+
+    <h2 class="text-lg font-bold mb-5" style="color:var(--w-muted); border-bottom:1px solid var(--w-border); padding-bottom:8px;">
+      검색 보기 · 개수 제한
+    </h2>
+
+    <div class="flex items-center justify-between gap-2 mb-4">
+      <div class="flex gap-1">
+        <span class="w-pill">날짜순</span>
+        <span class="w-pill font-bold" style="background:var(--w-text); color:white;">검색</span>
+      </div>
+      <button class="w-btn flex items-center gap-1"><i data-lucide="printer" class="w-3 h-3"></i>인쇄</button>
+    </div>
+
+    <div class="w-card p-3 mb-2 flex flex-col @md:flex-row gap-2 @md:items-end" style="opacity:0.5;">
+      <div class="flex flex-col gap-1 flex-1">
+        <label class="w-th">학교</label>
+        <select class="w-input" disabled><option>학교 선택...</option></select>
+      </div>
+      <div class="flex flex-col gap-1 flex-1">
+        <label class="w-th">학과</label>
+        <select class="w-input" disabled><option>학과 선택...</option></select>
+      </div>
+      <button class="w-btn w-btn-disabled flex items-center gap-1 justify-center"><i data-lucide="plus" class="w-3 h-3"></i>추가</button>
+    </div>
+    <div class="w-td mb-4" style="color:#b00;">최대 10개까지 담을 수 있습니다. 항목을 제거한 뒤 다시 추가해주세요.</div>
+
+    <div class="w-th mb-2">담긴 항목 10 / 10</div>
+    <div class="flex flex-col gap-1">
+      <div class="w-row p-2 flex items-center justify-between text-xs"><span>대학 1 / 학과 1</span><span>09-18</span></div>
+      <div class="w-row p-2 flex items-center justify-between text-xs"><span>대학 2 / 학과 2</span><span>09-19</span></div>
+      <div class="w-row p-2 flex items-center justify-between text-xs"><span>대학 3 / 학과 3</span><span>09-20</span></div>
+      <div class="w-row p-2 flex items-center justify-between text-xs"><span>대학 4 / 학과 4</span><span>09-20</span></div>
+      <div class="w-row p-2 flex items-center justify-between text-xs"><span>대학 5 / 학과 5</span><span>09-26</span></div>
+      <div class="w-row p-2 flex items-center justify-between text-xs"><span>대학 6 / 학과 6</span><span>09-27</span></div>
+      <div class="w-row p-2 flex items-center justify-between text-xs"><span>대학 7 / 학과 7</span><span>10-03</span></div>
+      <div class="w-row p-2 flex items-center justify-between text-xs"><span>대학 8 / 학과 8</span><span>10-04</span></div>
+      <div class="w-row p-2 flex items-center justify-between text-xs"><span>대학 9 / 학과 9</span><span>10-10</span></div>
+      <div class="w-row p-2 flex items-center justify-between text-xs"><span>대학 10 / 학과 10</span><span>10-11</span></div>
+    </div>
+
+    <div class="screen-notes">
+      <details open>
+        <summary>Notes</summary>
+        <p>화면 목적: 담을 수 있는 항목 개수의 상한을 인지시키기</p>
+        <ul>
+          <li>트리거: 담긴 항목이 10개에 도달한 상태에서 입력 폼에 진입</li>
+          <li>인터랙션: 입력 폼(학교/학과 선택, 추가 버튼)이 비활성화되고 안내 문구 노출</li>
+          <li>전환: 항목 하나를 제거해 9개가 되면 입력 폼이 다시 활성화됨</li>
+        </ul>
+      </details>
+    </div>
+
+  </div>
+</div>
+
+<!-- Screen 4: 인쇄 미리보기 - 검색 -->
+<div id="screen-4" class="screen" data-scenario="scenario-5">
+  <div class="screen-content @container max-w-6xl mx-auto p-6">
+
+    <h2 class="text-lg font-bold mb-5" style="color:var(--w-muted); border-bottom:1px solid var(--w-border); padding-bottom:8px;">
+      인쇄 미리보기 · 검색 결과
+    </h2>
+
+    <div class="w-print-frame mx-auto p-6" style="max-width:640px; aspect-ratio:1/1.414;">
+      <div class="text-center mb-4">
+        <div class="font-bold text-base">2026 논술 지원 요약</div>
+        <div class="w-th">조회일 2026-07-09</div>
+      </div>
+      <div class="flex flex-col gap-2">
+        <div class="grid grid-cols-4 w-th border-b pb-1" style="border-color:var(--w-border);">
+          <span>학교/학과</span><span>논술일</span><span>수능최저</span><span>반영비율</span>
+        </div>
+        <div class="grid grid-cols-4 w-td py-1 border-b" style="border-color:var(--w-border);">
+          <span>A대학교 경영학과</span><span>09-20 오전 09:00</span><span>등급합 6</span><span>70/30</span>
+        </div>
+        <div class="grid grid-cols-4 w-td py-1 border-b" style="border-color:#d33; background:#fdecec;">
+          <span style="color:#b00;">B대학교 국어국문학과</span><span style="color:#b00;">09-20 오전 09:00</span><span style="color:#b00;">등급합 4</span><span style="color:#b00;">60/40</span>
+        </div>
+        <div class="grid grid-cols-4 w-td py-1 border-b" style="border-color:#d33; background:#fdecec;">
+          <span style="color:#b00;">C대학교 사학과</span><span style="color:#b00;">09-20 오후 14:00</span><span style="color:#b00;">등급합 7</span><span style="color:#b00;">65/35</span>
+        </div>
+        <div class="grid grid-cols-4 w-td py-1">
+          <span>D대학교 소프트웨어학과<br><span class="w-th">(공학계열 대표 데이터)</span></span><span>10-03 오후 13:30</span><span>등급합 5</span><span>60/40</span>
+        </div>
+      </div>
+      <div class="w-th text-center mt-6">— 조작용 버튼·드롭다운은 인쇄 화면에 나타나지 않음 —</div>
+    </div>
+
+    <div class="text-center mt-3">
+      <button class="w-btn">← 검색 화면으로 돌아가기</button>
+    </div>
+
+    <div class="screen-notes">
+      <details open>
+        <summary>Notes</summary>
+        <p>화면 목적: 검색 결과를 A4 한 장으로 인쇄</p>
+        <ul>
+          <li>트리거: 검색 보기에서 "인쇄" 버튼 클릭</li>
+          <li>인터랙션: 브라우저 인쇄 다이얼로그와 함께 표시(또는 그 직전 미리보기) / "돌아가기"로 검색 화면 복귀</li>
+          <li>전환: 겹침 강조, 계열 대체 안내 등 검색 화면의 표시 규칙이 인쇄 레이아웃에도 동일하게 유지됨</li>
+        </ul>
+      </details>
+    </div>
+
+  </div>
+</div>
+
+<!-- Screen 5: 인쇄 미리보기 - 날짜순 -->
+<div id="screen-5" class="screen" data-scenario="scenario-5">
+  <div class="screen-content @container max-w-6xl mx-auto p-6">
+
+    <h2 class="text-lg font-bold mb-5" style="color:var(--w-muted); border-bottom:1px solid var(--w-border); padding-bottom:8px;">
+      인쇄 미리보기 · 날짜순 전체 일정
+    </h2>
+
+    <div class="w-print-frame mx-auto p-6" style="max-width:640px; aspect-ratio:1/1.414;">
+      <div class="text-center mb-4">
+        <div class="font-bold text-base">2026 논술고사 일정 전체 (서울 15개대)</div>
+        <div class="w-th">조회일 2026-07-09</div>
+      </div>
+      <div class="flex flex-col gap-1">
+        <div class="grid grid-cols-3 w-td py-1 border-b" style="border-color:var(--w-border);">
+          <span>서강대학교</span><span>2026-09-20</span><span>오전 09:00</span>
+        </div>
+        <div class="grid grid-cols-3 w-td py-1 border-b" style="border-color:var(--w-border);">
+          <span>성균관대학교</span><span>2026-09-20</span><span>오후 14:00</span>
+        </div>
+        <div class="grid grid-cols-3 w-td py-1 border-b" style="border-color:var(--w-border);">
+          <span>중앙대학교</span><span>2026-09-26</span><span>오전 10:00</span>
+        </div>
+        <div class="grid grid-cols-3 w-td py-1 border-b" style="border-color:var(--w-border);">
+          <span>한양대학교</span><span>2026-10-03</span><span>오후 13:30</span>
+        </div>
+        <div class="grid grid-cols-3 w-th py-1">
+          <span>서울대학교 외 8개</span><span>데이터 없음</span><span>—</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-center mt-3">
+      <button class="w-btn">← 날짜순 화면으로 돌아가기</button>
+    </div>
+
+    <div class="screen-notes">
+      <details open>
+        <summary>Notes</summary>
+        <p>화면 목적: 날짜순 전체 일정을 A4 한 장으로 인쇄</p>
+        <ul>
+          <li>트리거: 날짜순 보기에서 "인쇄" 버튼 클릭</li>
+          <li>인터랙션: 브라우저 인쇄 다이얼로그와 함께 표시 / "돌아가기"로 날짜순 화면 복귀</li>
+          <li>전환: 없음 (단일 목록, 탭 이동만 존재)</li>
+        </ul>
+      </details>
+    </div>
+
+  </div>
+</div>
+
+<script>
+var currentScreen = 0;
+var screenIds = [];
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+  document.getElementById('screen-' + id).classList.add('active');
+  document.querySelectorAll('nav button[id^="nav-"]').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById('nav-' + id).classList.add('active');
+  currentScreen = screenIds.indexOf(id);
+}
+
+function setViewport(mode) {
+  document.body.classList.remove('viewport-mobile', 'viewport-desktop');
+  document.body.classList.add('viewport-' + mode);
+  document.querySelectorAll('.vp-toggle button').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById('vp-' + mode).classList.add('active');
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('nav button[id^="nav-"]').forEach(function(b) {
+    screenIds.push(parseInt(b.id.replace('nav-', '')));
+  });
+  var first = document.querySelector('nav button[id^="nav-"]');
+  if (first) first.click();
+  lucide.createIcons();
+});
+</script>
+</body>
+</html>
